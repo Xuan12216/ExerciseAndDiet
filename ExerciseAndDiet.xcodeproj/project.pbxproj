@@ -16,6 +16,8 @@
 		1376C93E2A2B767C00752226 /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1376C93D2A2B767C00752226 /* StartView.swift */; };
 		1376C9402A2B769D00752226 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1376C93F2A2B769D00752226 /* MainView.swift */; };
 		1376C9422A2B76BE00752226 /* AddFoodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1376C9412A2B76BE00752226 /* AddFoodView.swift */; };
+		1376C94B2A2B928200752226 /* ShowDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1376C94A2A2B928200752226 /* ShowDetailView.swift */; };
+		1376C94D2A2BA71D00752226 /* AddFoodKcalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1376C94C2A2BA71D00752226 /* AddFoodKcalView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +31,8 @@
 		1376C93D2A2B767C00752226 /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
 		1376C93F2A2B769D00752226 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		1376C9412A2B76BE00752226 /* AddFoodView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFoodView.swift; sourceTree = "<group>"; };
+		1376C94A2A2B928200752226 /* ShowDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowDetailView.swift; sourceTree = "<group>"; };
+		1376C94C2A2BA71D00752226 /* AddFoodKcalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFoodKcalView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,7 +69,9 @@
 				1376C92A2A2B73CA00752226 /* ContentView.swift */,
 				1376C93D2A2B767C00752226 /* StartView.swift */,
 				1376C93F2A2B769D00752226 /* MainView.swift */,
+				1376C94A2A2B928200752226 /* ShowDetailView.swift */,
 				1376C9412A2B76BE00752226 /* AddFoodView.swift */,
+				1376C94C2A2BA71D00752226 /* AddFoodKcalView.swift */,
 				1376C92C2A2B73CC00752226 /* Assets.xcassets */,
 				1376C9312A2B73CC00752226 /* Persistence.swift */,
 				1376C9332A2B73CC00752226 /* ExerciseAndDiet.xcdatamodeld */,
@@ -152,12 +158,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1376C94D2A2BA71D00752226 /* AddFoodKcalView.swift in Sources */,
 				1376C9322A2B73CC00752226 /* Persistence.swift in Sources */,
 				1376C9402A2B769D00752226 /* MainView.swift in Sources */,
 				1376C93E2A2B767C00752226 /* StartView.swift in Sources */,
 				1376C9352A2B73CC00752226 /* ExerciseAndDiet.xcdatamodeld in Sources */,
 				1376C92B2A2B73CA00752226 /* ContentView.swift in Sources */,
 				1376C9292A2B73CA00752226 /* ExerciseAndDietApp.swift in Sources */,
+				1376C94B2A2B928200752226 /* ShowDetailView.swift in Sources */,
 				1376C9422A2B76BE00752226 /* AddFoodView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
