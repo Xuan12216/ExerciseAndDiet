@@ -13,6 +13,9 @@
 		1376C9302A2B73CC00752226 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1376C92F2A2B73CC00752226 /* Preview Assets.xcassets */; };
 		1376C9322A2B73CC00752226 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1376C9312A2B73CC00752226 /* Persistence.swift */; };
 		1376C9352A2B73CC00752226 /* ExerciseAndDiet.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1376C9332A2B73CC00752226 /* ExerciseAndDiet.xcdatamodeld */; };
+		1376C93E2A2B767C00752226 /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1376C93D2A2B767C00752226 /* StartView.swift */; };
+		1376C9402A2B769D00752226 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1376C93F2A2B769D00752226 /* MainView.swift */; };
+		1376C9422A2B76BE00752226 /* AddFoodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1376C9412A2B76BE00752226 /* AddFoodView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +26,9 @@
 		1376C92F2A2B73CC00752226 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		1376C9312A2B73CC00752226 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		1376C9342A2B73CC00752226 /* ExerciseAndDiet.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ExerciseAndDiet.xcdatamodel; sourceTree = "<group>"; };
+		1376C93D2A2B767C00752226 /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
+		1376C93F2A2B769D00752226 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		1376C9412A2B76BE00752226 /* AddFoodView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFoodView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +63,9 @@
 			children = (
 				1376C9282A2B73CA00752226 /* ExerciseAndDietApp.swift */,
 				1376C92A2A2B73CA00752226 /* ContentView.swift */,
+				1376C93D2A2B767C00752226 /* StartView.swift */,
+				1376C93F2A2B769D00752226 /* MainView.swift */,
+				1376C9412A2B76BE00752226 /* AddFoodView.swift */,
 				1376C92C2A2B73CC00752226 /* Assets.xcassets */,
 				1376C9312A2B73CC00752226 /* Persistence.swift */,
 				1376C9332A2B73CC00752226 /* ExerciseAndDiet.xcdatamodeld */,
@@ -144,9 +153,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				1376C9322A2B73CC00752226 /* Persistence.swift in Sources */,
+				1376C9402A2B769D00752226 /* MainView.swift in Sources */,
+				1376C93E2A2B767C00752226 /* StartView.swift in Sources */,
 				1376C9352A2B73CC00752226 /* ExerciseAndDiet.xcdatamodeld in Sources */,
 				1376C92B2A2B73CA00752226 /* ContentView.swift in Sources */,
 				1376C9292A2B73CA00752226 /* ExerciseAndDietApp.swift in Sources */,
+				1376C9422A2B76BE00752226 /* AddFoodView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
