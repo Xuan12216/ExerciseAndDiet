@@ -21,6 +21,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1370A7852A2E2F7700DC40ED /* ExerciseAndDiet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ExerciseAndDiet.entitlements; sourceTree = "<group>"; };
+		1370A7862A2E312A00DC40ED /* ExerciseAndDietRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ExerciseAndDietRelease.entitlements; sourceTree = "<group>"; };
 		1376C9252A2B73CA00752226 /* ExerciseAndDiet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExerciseAndDiet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1376C9282A2B73CA00752226 /* ExerciseAndDietApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseAndDietApp.swift; sourceTree = "<group>"; };
 		1376C92A2A2B73CA00752226 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -65,6 +67,8 @@
 		1376C9272A2B73CA00752226 /* ExerciseAndDiet */ = {
 			isa = PBXGroup;
 			children = (
+				1370A7862A2E312A00DC40ED /* ExerciseAndDietRelease.entitlements */,
+				1370A7852A2E2F7700DC40ED /* ExerciseAndDiet.entitlements */,
 				1376C9282A2B73CA00752226 /* ExerciseAndDietApp.swift */,
 				1376C92A2A2B73CA00752226 /* ContentView.swift */,
 				1376C93D2A2B767C00752226 /* StartView.swift */,
@@ -292,12 +296,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ExerciseAndDiet/ExerciseAndDiet.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ExerciseAndDiet/Preview Content\"";
 				DEVELOPMENT_TEAM = U778MJ29XA;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app requires to access your health data";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app requires to access your health data";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -310,9 +317,12 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = WASD.ExerciseAndDiet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -321,12 +331,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ExerciseAndDiet/ExerciseAndDietRelease.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ExerciseAndDiet/Preview Content\"";
 				DEVELOPMENT_TEAM = U778MJ29XA;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app requires to access your health data";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app requires to access your health data";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -339,9 +353,13 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = WASD.ExerciseAndDiet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

@@ -12,35 +12,42 @@ struct StartView: View {
     var body: some View {
         NavigationView {
             VStack {
+                //輸入好身高和體重後跳轉MainView
                 NavigationLink(isActive: $isNavPush) {
                     MainView()
                         .navigationBarBackButtonHidden(true)
                 } label: {}
                 
                 Spacer()
+                
+                //體重
                 TextField("請輸入體重 (公斤)", text: $weight)
                     .keyboardType(.decimalPad)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .frame(maxWidth: .infinity)
                     .padding(.bottom, 15)
                 
+                //身高
                 TextField("請輸入身高 (公分)", text: $height)
                     .keyboardType(.decimalPad)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .frame(maxWidth: .infinity)
                     .padding(.bottom, 15)
                 
+                //輸入好身高和體重後計算BMI值
                 Text("BMI: \(String(format: "%.1f", bmi))")
                     .font(.system(size: 20))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 15)
                 
+                //輸入好身高和體重後計算建議攝取熱量
                 Text("建議攝取熱量: \(String(format: "%.1f", suggestedCalories)) 大卡")
                     .font(.system(size: 18))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 15)
                 
                 HStack {
+                    //重新輸入Button
                     if isShowingResult {
                         Button(action: {
                             // 重置輸入
@@ -59,9 +66,11 @@ struct StartView: View {
                         }
                         .padding(.bottom, 15)
                         
+                        //下一頁Button
                         Button(action: {
                             let weightValue = Double(weight)
                             let heightValue = Double(height)
+                            //把資料存進UserDefault
                             UserDefaults.standard.set(weightValue, forKey: "weight")
                             UserDefaults.standard.set(heightValue, forKey: "height")
                             UserDefaults.standard.set(bmi, forKey: "bmi")
@@ -98,6 +107,7 @@ struct StartView: View {
         }
     }
     
+    //BMI計算
     private func calculateBMI() {
         guard let weightValue = Double(weight), weightValue > 0,
               let heightValue = Double(height), heightValue > 0 else {

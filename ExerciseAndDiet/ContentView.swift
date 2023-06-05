@@ -10,6 +10,7 @@ struct ContentView: View {
         NavigationView {
             VStack(spacing: 20) {
                 
+                //檢測是否有輸入過資料，如果有資料就跳轉MainView頁面
                 if let savedBmi = UserDefaults.standard.value(forKey: "bmi") as? Double{
                     NavigationLink(isActive: $isData) {
                         MainView()
@@ -17,13 +18,16 @@ struct ContentView: View {
                     } label: {}
                 }
                 
+                //點擊“開始使用”Button後跳轉StartView
                 NavigationLink(isActive: $isNavPush) {
                     StartView()
                         .navigationBarBackButtonHidden(true)
                 } label: {}
                 
+                //空行
                 Spacer()
                 
+                //Logo
                 Image("heartbeat")
                     .resizable()
                     .scaledToFit()
@@ -41,7 +45,7 @@ struct ContentView: View {
                 }
                 Spacer()
             }
-            .navigationTitle("Exercise & Diet")
+            .navigationTitle("Exercise & Diet")//左上角的Title
             .padding()
         }
     }
