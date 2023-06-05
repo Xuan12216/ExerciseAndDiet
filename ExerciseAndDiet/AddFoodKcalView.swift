@@ -7,6 +7,12 @@ struct AddFoodKcalView: View {
     @State private var name: String = ""
     @State private var calories: Double?
     @State private var showAlert = false // 控制是否顯示Alert，成功儲存
+    @State private var isRepeatAlert = false // 控制是否顯示Alert，重複名稱
+    
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \FoodList.name, ascending: true)],
+        animation: .default)
+    private var foodList: FetchedResults<FoodList>
     
     var body: some View {
         NavigationView{
@@ -53,6 +59,13 @@ struct AddFoodKcalView: View {
                 dismissButton: .default(Text("確定"))
             )
         }
+        .alert(isPresented: $isRepeatAlert) {
+            Alert(
+                title: Text("名稱重複"),
+                message: Text("請重新輸入不同名稱"),
+                dismissButton: .default(Text("確定"))
+            )
+        }
     }
     
     private func addFoodKcal() {
@@ -60,7 +73,15 @@ struct AddFoodKcalView: View {
             return
         }
         
-        let newFood = FoodList(context: viewContext) // 使用正确的实体名：Food
+        let existingFood = foodList.first { $0.name == name }
+        
+        if existingFood != nil {
+            // 名稱已存在，顯示錯誤提示
+            isRepeatAlert = true
+            return
+        }
+        
+        let newFood = FoodList(context: viewContext)
         newFood.name = name
         newFood.calories = calories!
         
