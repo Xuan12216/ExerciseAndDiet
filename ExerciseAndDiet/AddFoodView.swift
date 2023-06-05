@@ -5,14 +5,19 @@ struct AddFoodView: View {
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.managedObjectContext) private var viewContext
     
-    @Binding var selectedFood: FoodList? // 添加selectedFood属性
+    @Binding var selectedFood: FoodList?
     
     @State private var name: String = ""
     @State private var calories: Double?
     @State private var quantity: Int = 1
     @State private var currentDate = Date()
     @State private var currentTime = Date()
-    @State private var showAlert = false // 控制是否顯示Alert，成功儲存
+    @State private var showAlert = false
+    
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \FoodList.name, ascending: true)],
+        animation: .default)
+    private var foodList: FetchedResults<FoodList>
     
     var maximumDate: Date {
         return Calendar.current.startOfDay(for: Date())
@@ -20,88 +25,117 @@ struct AddFoodView: View {
     
     var body: some View {
         NavigationView {
-            VStack {
-                HStack {
-                    Text("名稱")
-                        .padding([.top, .leading, .bottom])
+            ScrollView{
+                VStack {
+                    HStack {
+                        Text("名稱")
+                            .padding([.top, .leading, .bottom])
+                        
+                        TextField("輸入食物名稱", text: $name)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .padding([.top, .trailing, .bottom])
+                    }
                     
-                    TextField("輸入食物名稱", text: $name)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .padding([.top, .trailing, .bottom])
-                }
-                
-                HStack {
-                    Text("熱量")
-                        .padding([.top, .leading, .bottom])
-                    
-                    TextField("輸入食物的熱量", value: $calories, format: .number)
-                        .keyboardType(.decimalPad)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .padding([.top, .trailing, .bottom])
-                }
-                
-                HStack {
-                    Text("數量")
-                        .padding()
-                    Spacer()
-                    Button(action: {
-                        if quantity > 1 {
-                            quantity -= 1
+                    if !foodList.filter({ food in
+                        return food.name?.contains(name) ?? false
+                    }).isEmpty {
+                        HStack{
+                            Text("相關結果：")
+                                .padding(.leading)
+                            Spacer()
                         }
-                    }) {
-                        Image(systemName: "minus.circle.fill")
-                            .font(.title3)
-                            .foregroundColor(.black)
+                        ScrollView(.horizontal) {
+                            LazyHStack(spacing: 10) {
+                                ForEach(foodList.filter { food in
+                                    return food.name?.contains(name) ?? false
+                                }, id: \.self) { food in
+                                    CardView(food: food)
+                                        .onTapGesture {
+                                            selectedFood = food
+                                            name = food.name ?? ""
+                                            calories = food.calories
+                                        }
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
+                        .frame(height: 100)
                     }
                     
-                    Text("\(quantity)")
-                        .font(.title3)
+                    HStack {
+                        Text("熱量")
+                            .padding([.top, .leading, .bottom])
+                        
+                        TextField("輸入食物的熱量", value: $calories, format: .number)
+                            .keyboardType(.decimalPad)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .padding([.top, .trailing, .bottom])
+                    }
+                    
+                    HStack {
+                        Text("數量")
+                            .padding()
+                        Spacer()
+                        Button(action: {
+                            if quantity > 1 {
+                                quantity -= 1
+                            }
+                        }) {
+                            Image(systemName: "minus.circle.fill")
+                                .font(.title3)
+                                .foregroundColor(.black)
+                        }
+                        
+                        Text("\(quantity)")
+                            .font(.title3)
+                            .padding()
+                        
+                        Button(action: {
+                            quantity += 1
+                        }) {
+                            Image(systemName: "plus.circle.fill")
+                                .font(.title3)
+                                .foregroundColor(.black)
+                        }
+                        .padding(.trailing)
+                    }
+                    
+                    DatePicker("日期", selection: $currentDate, in: ...maximumDate, displayedComponents: .date)
                         .padding()
                     
-                    Button(action: {
-                        quantity += 1
-                    }) {
-                        Image(systemName: "plus.circle.fill")
-                            .font(.title3)
-                            .foregroundColor(.black)
-                    }
-                    .padding(.trailing)
+                    DatePicker("時間", selection: $currentTime, displayedComponents: .hourAndMinute)
+                        .padding()
+                    
+                    Spacer()
                 }
-                
-                DatePicker("日期", selection: $currentDate, in: ...maximumDate, displayedComponents: .date)
-                    .padding()
-                
-                DatePicker("時間", selection: $currentTime, displayedComponents: .hourAndMinute)
-                    .padding()
-                
-                Spacer()
             }
-        }
-        .navigationBarTitle("新增用餐紀錄")
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarItems(
-            leading: Button(action: {
-                presentationMode.wrappedValue.dismiss()
-            }) {
-                Text("取消")
-            },
-            trailing: Button(action: {
-                saveFoodRecord()
-            }) {
-                Text("儲存")
-            }
-        )
-        .alert(isPresented: $showAlert) {
-            Alert(
-                title: Text("儲存成功"),
-                message: Text("用餐紀錄已成功儲存"),
-                dismissButton: .default(Text("確定"))
+            .navigationBarTitle("新增用餐紀錄")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarItems(
+                leading: Button(action: {
+                    selectedFood = nil
+                    presentationMode.wrappedValue.dismiss()
+                }) {
+                    Text("取消")
+                },
+                trailing: Button(action: {
+                    saveFoodRecord()
+                }) {
+                    Text("儲存")
+                }
             )
-        }
-        .onAppear {
-            if let food = selectedFood {
-                name = food.name ?? ""
-                calories = food.calories
+            .alert(isPresented: $showAlert) {
+                Alert(
+                    title: Text("儲存成功"),
+                    message: Text("用餐紀錄已成功儲存"),
+                    dismissButton: .default(Text("確定"))
+                )
+            }
+            .onAppear {
+                if let food = selectedFood {
+                    name = food.name ?? ""
+                    calories = food.calories
+                }
             }
         }
     }
@@ -121,12 +155,29 @@ struct AddFoodView: View {
         
         do {
             try viewContext.save()
-            showAlert = true // 儲存成功後顯示Alert
-            presentationMode.wrappedValue.dismiss() // 儲存成功後關閉視圖
-            selectedFood = nil // 清空selectedFood的值
+            showAlert = true
+            presentationMode.wrappedValue.dismiss()
+            selectedFood = nil
         } catch {
-            // 處理儲存錯誤
             print("Error saving food record: \(error)")
+        }
+    }
+    
+    struct CardView: View {
+        var food: FoodList
+        
+        var body: some View {
+            VStack(alignment: .leading) {
+                Text(food.name ?? "")
+                    .foregroundColor(.white)
+                    .padding([.leading,.top,.trailing])
+                
+                Text("\(String(format: "%.1f", food.calories ?? 0))大卡")
+                    .foregroundColor(.white)
+                    .padding([.leading,.bottom,.trailing])
+            }
+            .background(Color.black)
+            .cornerRadius(10)
         }
     }
 }
