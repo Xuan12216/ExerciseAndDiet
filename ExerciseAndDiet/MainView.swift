@@ -64,49 +64,55 @@ struct MainView: View {
                         
                         createCardView(title: "攝取 - 消耗的大卡量", value: "\(String(format: "%.1f", currentMinusConsumeCalories))")
                             .padding([.leading, .trailing])
+                        
+                        HStack {
+                            //進度條
+                            if(currentMinusConsumeCalories > suggestedCalories){
+                                ProgressView(value: Double(currentMinusConsumeCalories), total: Double(suggestedCalories)) // 進度條
+                                    .accentColor(Color.red)
+                                    .scaleEffect(x: 1, y: 8)
+                                    .padding([.leading,.top,.bottom])
+                                
+                            }
+                            else if(currentMinusConsumeCalories < 0){
+                                ProgressView(value: Double(0), total: Double(suggestedCalories)) // 進度條
+                                    .accentColor(Color.green)
+                                    .scaleEffect(x: 1, y: 8)
+                                    .padding([.leading,.top,.bottom])
+                                
+                            }
+                            else{
+                                ProgressView(value: Double(currentMinusConsumeCalories), total: Double(suggestedCalories)) // 進度條
+                                    .accentColor(Color.green)
+                                    .scaleEffect(x: 1, y: 8)
+                                    .padding([.leading,.top,.bottom])
+                            }
+                            
+                            //新增飲食紀錄Button
+                            Button(action: {
+                                isNavPush = true
+                            }) {
+                                Image(systemName: "plus.circle.fill")
+                                    .resizable()
+                                    .frame(width: 25.0, height: 25.0)
+                                    .foregroundColor(.black)
+                                    .padding([.trailing,.top,.bottom])
+                            }
+                            
+                            //跳轉新增用餐紀錄頁面（AddFoodView）
+                            NavigationLink(isActive: $isNavPush) {
+                                AddFoodView(selectedFood: $selectedFood) // 将selectedFood传递给AddFoodView
+                                    .navigationBarBackButtonHidden(true)
+                            } label: {}
+                            
+                            //跳轉詳細用餐紀錄頁面（ShowDetailView）
+                            NavigationLink(isActive: $showDetail) {
+                                ShowDetailView()
+                                    .navigationBarBackButtonHidden(true)
+                            } label: {}
+                        }
                     } else {
                         Text("正在加載數據...")
-                    }
-                    
-                    HStack {
-                        //進度條
-                        if(currentCalories > suggestedCalories){
-                            ProgressView(value: Double(currentCalories), total: Double(suggestedCalories)) // 進度條
-                                .accentColor(Color.red)
-                                .scaleEffect(x: 1, y: 8)
-                                .padding([.leading,.top,.bottom])
-                            
-                        }
-                        else{
-                            ProgressView(value: Double(currentCalories), total: Double(suggestedCalories)) // 進度條
-                                .accentColor(Color.green)
-                                .scaleEffect(x: 1, y: 8)
-                                .padding([.leading,.top,.bottom])
-                            
-                        }
-                        
-                        //新增飲食紀錄Button
-                        Button(action: {
-                            isNavPush = true
-                        }) {
-                            Image(systemName: "plus.circle.fill")
-                                .resizable()
-                                .frame(width: 25.0, height: 25.0)
-                                .foregroundColor(.black)
-                                .padding([.trailing,.top,.bottom])
-                        }
-                        
-                        //跳轉新增用餐紀錄頁面（AddFoodView）
-                        NavigationLink(isActive: $isNavPush) {
-                            AddFoodView(selectedFood: $selectedFood) // 将selectedFood传递给AddFoodView
-                                .navigationBarBackButtonHidden(true)
-                        } label: {}
-                        
-                        //跳轉詳細用餐紀錄頁面（ShowDetailView）
-                        NavigationLink(isActive: $showDetail) {
-                            ShowDetailView()
-                                .navigationBarBackButtonHidden(true)
-                        } label: {}
                     }
                     
                     //詳細飲食紀錄Button
