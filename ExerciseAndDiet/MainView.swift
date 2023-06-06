@@ -9,6 +9,7 @@ struct MainView: View {
     @State private var consumeCalories: Double = 0//消耗大卡量
     @State private var bmi: Double = 0.0
     @State private var isNavPush = false // 控制是否顯示 新增用餐紀錄
+    @State private var isDataLoaded = false
     @State private var shouldLogout = false //logout
     @State private var showDetail = false // 控制是否顯示 詳細用餐紀錄
     @State private var addFoodKcal = false // 控制是否顯示詳細紀錄
@@ -56,13 +57,16 @@ struct MainView: View {
                     createCardView(title: "目前大卡攝取量", value: "\(String(format: "%.1f", currentCalories))")
                         .padding([.leading,.trailing])
                     
-                    //消耗的總大卡量
-                    createCardView(title: "動態+靜態消耗的總大卡量", value: "\(String(format: "%.1f", consumeCalories))")
-                        .padding([.leading,.trailing])
                     
-                    //攝取-消耗的大卡量
-                    createCardView(title: "攝取 - 消耗的大卡量", value: "\(String(format: "%.1f", currentMinusConsumeCalories))")
-                        .padding([.leading,.trailing])
+                    if isDataLoaded {
+                        createCardView(title: "消耗的總大卡量", value: "\(String(format: "%.1f", consumeCalories))")
+                            .padding([.leading, .trailing])
+                        
+                        createCardView(title: "攝取 - 消耗的大卡量", value: "\(String(format: "%.1f", currentMinusConsumeCalories))")
+                            .padding([.leading, .trailing])
+                    } else {
+                        Text("正在加載數據...")
+                    }
                     
                     HStack {
                         //進度條
@@ -121,6 +125,16 @@ struct MainView: View {
                 }
                 .navigationTitle("飲食紀錄")
                 .onAppear {//進入頁面時首先加載的數據
+                    requestHealthKitAuthorization()
+                    getActiveEnergyBurned()
+                    readBasalEnergyBurned()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                        // 加载数据并计算 consumeCalories 和 currentMinusConsumeCalories 的值
+                        consumeCalories = activeEnergyBurned + basalEnergyBurned
+                        currentMinusConsumeCalories = currentCalories - consumeCalories
+                        isDataLoaded = true
+                    }
+
                     fetchFoodRecords()//讀取飲食紀錄的Database（CoreData）
                     
                     if let savedWeight = UserDefaults.standard.value(forKey: "weight") as? Double {
@@ -130,6 +144,7 @@ struct MainView: View {
                     if let savedHeight = UserDefaults.standard.value(forKey: "height") as? Double {
                         height = savedHeight
                     }
+                    
                     currentDate = Date() // 更新當前日期
                     calculateBMI()
                 }
@@ -231,7 +246,6 @@ struct MainView: View {
                 Text("運動紀錄")
             }
             .onAppear {
-                requestHealthKitAuthorization()
                 getStepCount()
                 getDistance()
                 getActiveEnergyBurned()
@@ -504,7 +518,6 @@ struct MainView: View {
                 }
             }
         }
-        
         // 执行查询
         healthStore.execute(query)
     }
