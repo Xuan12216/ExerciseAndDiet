@@ -198,13 +198,15 @@ struct MainView: View {
             //================================================================================
             //tab 運動紀錄 start
             NavigationView {
-                VStack {
-                    Text("步数: \(stepCount)")
-                    Text("距离: \(distance)")
-                    Text("活动: \(activeEnergyBurned)")
-                    Text("站立时间: \(standHours)")
-                    Text("运动时间: \(exerciseHours)")
+                VStack(spacing: 20) {
+                    createCardView(title: "步数", value: "\(stepCount)")
+                    createCardView(title: "距离", value: "\(distance)")
+                    createCardView(title: "活动", value: "\(activeEnergyBurned)")
+                    createCardView(title: "站立时间", value: "\(standHours)")
+                    createCardView(title: "运动时间", value: "\(exerciseHours)")
+                    Spacer()
                 }
+                .padding()
                 .navigationTitle("運動紀錄")
             }
             .tabItem {
@@ -219,6 +221,8 @@ struct MainView: View {
                 getStandHours()
                 getExerciseHours()
             }
+
+
             //tab 運動紀錄 end
             //================================================================================
             //tab 個人資訊 start
@@ -260,6 +264,8 @@ struct MainView: View {
         }
     }
     
+    //================================================================================
+    //func
     //讀取飲食紀錄的func （FoodRecord CoreData）
     private func fetchFoodRecords() {
         let request: NSFetchRequest<FoodRecord> = FoodRecord.fetchRequest()
@@ -320,7 +326,13 @@ struct MainView: View {
     
     private func getStepCount() {
         let stepCountType = HKQuantityType.quantityType(forIdentifier: .stepCount)!
-        let query = HKStatisticsQuery(quantityType: stepCountType, quantitySamplePredicate: nil, options: .cumulativeSum) { (_, result, error) in
+        
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let tomorrow = calendar.date(byAdding: .day, value: 1, to: today)!
+        let predicate = HKQuery.predicateForSamples(withStart: today, end: tomorrow, options: .strictStartDate)
+        
+        let query = HKStatisticsQuery(quantityType: stepCountType, quantitySamplePredicate: predicate, options: .cumulativeSum) { (_, result, error) in
             if let sumQuantity = result?.sumQuantity() {
                 let stepCount = sumQuantity.doubleValue(for: HKUnit.count())
                 DispatchQueue.main.async {
@@ -334,10 +346,16 @@ struct MainView: View {
         }
         healthStore.execute(query)
     }
-    
+        
     private func getDistance() {
         let distanceType = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
-        let query = HKStatisticsQuery(quantityType: distanceType, quantitySamplePredicate: nil, options: .cumulativeSum) { (_, result, error) in
+        
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let tomorrow = calendar.date(byAdding: .day, value: 1, to: today)!
+        let predicate = HKQuery.predicateForSamples(withStart: today, end: tomorrow, options: .strictStartDate)
+        
+        let query = HKStatisticsQuery(quantityType: distanceType, quantitySamplePredicate: predicate, options: .cumulativeSum) { (_, result, error) in
             if let sumQuantity = result?.sumQuantity() {
                 let distanceInMeters = sumQuantity.doubleValue(for: HKUnit.meter())
                 DispatchQueue.main.async {
@@ -354,7 +372,13 @@ struct MainView: View {
     
     private func getActiveEnergyBurned() {
         let energyType = HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned)!
-        let query = HKStatisticsQuery(quantityType: energyType, quantitySamplePredicate: nil, options: .cumulativeSum) { (_, result, error) in
+        
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let tomorrow = calendar.date(byAdding: .day, value: 1, to: today)!
+        let predicate = HKQuery.predicateForSamples(withStart: today, end: tomorrow, options: .strictStartDate)
+        
+        let query = HKStatisticsQuery(quantityType: energyType, quantitySamplePredicate: predicate, options: .cumulativeSum) { (_, result, error) in
             if let sumQuantity = result?.sumQuantity() {
                 let energy = sumQuantity.doubleValue(for: HKUnit.kilocalorie())
                 DispatchQueue.main.async {
@@ -371,7 +395,13 @@ struct MainView: View {
     
     private func getStandHours() {
         let standType = HKQuantityType.quantityType(forIdentifier: .appleStandTime)!
-        let query = HKStatisticsQuery(quantityType: standType, quantitySamplePredicate: nil, options: .cumulativeSum) { (_, result, error) in
+        
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let tomorrow = calendar.date(byAdding: .day, value: 1, to: today)!
+        let predicate = HKQuery.predicateForSamples(withStart: today, end: tomorrow, options: .strictStartDate)
+        
+        let query = HKStatisticsQuery(quantityType: standType, quantitySamplePredicate: predicate, options: .cumulativeSum) { (_, result, error) in
             if let sumQuantity = result?.sumQuantity() {
                 let standHours = sumQuantity.doubleValue(for: HKUnit.minute()) / 60
                 DispatchQueue.main.async {
@@ -389,6 +419,7 @@ struct MainView: View {
     private func getExerciseHours() {
         let workoutType = HKObjectType.workoutType()
         let predicate = HKQuery.predicateForWorkouts(with: .other)
+        
         let query = HKSampleQuery(sampleType: workoutType, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { (_, samples, error) in
             if let workouts = samples as? [HKWorkout] {
                 let exerciseHours = workouts.reduce(0.0) { $0 + $1.duration }
@@ -433,6 +464,15 @@ struct MainView: View {
         } catch {
             print("Error deleting food list: \(error)")
         }
+    }
+    
+    func createCardView(title: String, value: String) -> some View {
+        Text("\(title): \(value)")
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding()
+            .background(Color.white)
+            .cornerRadius(10)
+            .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
     }
 }
 
