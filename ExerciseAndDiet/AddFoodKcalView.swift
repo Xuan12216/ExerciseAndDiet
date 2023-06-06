@@ -19,6 +19,7 @@ struct AddFoodKcalView: View {
             VStack{
                 HStack {
                     Text("名稱")
+                    
                         .padding([.top, .leading, .bottom])
                     
                     TextField("輸入食物名稱", text: $name)
