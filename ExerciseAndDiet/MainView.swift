@@ -3,9 +3,11 @@ import CoreData
 import HealthKit
 
 struct MainView: View {
-    @State private var currentCaloriesIntake: Double = 0.0
+    @State private var currentCalories: Double = 0.0 //目前攝取大卡量
+    @State private var suggestedCalories: Double = 0 //建議攝取大卡量
+    @State private var currentMinusConsumeCalories: Double = 0 //
+    @State private var consumeCalories: Double = 0//消耗大卡量
     @State private var bmi: Double = 0.0
-    @State private var suggestedCalories: Double = 0
     @State private var isNavPush = false // 控制是否顯示 新增用餐紀錄
     @State private var shouldLogout = false //logout
     @State private var showDetail = false // 控制是否顯示 詳細用餐紀錄
@@ -14,13 +16,14 @@ struct MainView: View {
     @State private var foodListAdded = false // 控制是否接收到通知
     @State private var addFromFoodList = false // 控制是否接收到通知
     @State private var showWeightInput: Bool = false
-    @State private var weight: Double = UserDefaults.standard.value(forKey: "weight") as! Double
+    @State private var weight: Double = 0.0
     @State private var showHeightInput: Bool = false
-    @State private var height: Double = UserDefaults.standard.value(forKey: "height") as! Double
+    @State private var height: Double = 0.0
     //以下是用來存取HealthKit的變數
     @State private var stepCount: Double = 0
     @State private var distance: Double = 0
     @State private var activeEnergyBurned: Double = 0
+    @State private var basalEnergyBurned: Double = 0
     @State private var standHours: Double = 0
     @State private var exerciseHours: TimeInterval = 0
     
@@ -36,47 +39,47 @@ struct MainView: View {
         TabView {
             //tab 飲食紀錄 start
             NavigationView {
-                VStack {
-                    //跳轉新增用餐紀錄頁面（AddFoodView）
-                    NavigationLink(isActive: $isNavPush) {
-                        AddFoodView(selectedFood: $selectedFood) // 将selectedFood传递给AddFoodView
-                            .navigationBarBackButtonHidden(true)
-                    } label: {}
-                    
-                    //跳轉詳細用餐紀錄頁面（ShowDetailView）
-                    NavigationLink(isActive: $showDetail) {
-                        ShowDetailView()
-                            .navigationBarBackButtonHidden(true)
-                    } label: {}
-                    
+                VStack (spacing: 20){
                     //顯示Bmi
                     if bmi != 0.0 {
-                        Text("BMI: \(String(format: "%.1f", bmi))")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.top, 15)
-                            .padding(.leading)
+                        createCardView(title: "BMI", value: "\(String(format: "%.1f", bmi))")
+                            .padding([.leading,.trailing,.top])
                     }
-                    
+    
                     //顯示建議大卡攝取量
                     if suggestedCalories != 0.0 {
-                        Text("建議大卡攝取量: \(String(format: "%.1f", suggestedCalories))")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.top, 15)
-                            .padding(.leading)
+                        createCardView(title: "建議大卡攝取量", value: "\(String(format: "%.1f", suggestedCalories))")
+                            .padding([.leading,.trailing])
                     }
                     
                     //目前大卡攝取量
-                    Text("目前大卡攝取量: \(String(format: "%.1f", currentCaloriesIntake))") // 顯示目前大卡攝取量
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.top, 15)
-                        .padding(.leading)
+                    createCardView(title: "目前大卡攝取量", value: "\(String(format: "%.1f", currentCalories))")
+                        .padding([.leading,.trailing])
+                    
+                    //消耗的總大卡量
+                    createCardView(title: "動態+靜態消耗的總大卡量", value: "\(String(format: "%.1f", consumeCalories))")
+                        .padding([.leading,.trailing])
+                    
+                    //攝取-消耗的大卡量
+                    createCardView(title: "攝取 - 消耗的大卡量", value: "\(String(format: "%.1f", currentMinusConsumeCalories))")
+                        .padding([.leading,.trailing])
                     
                     HStack {
                         //進度條
-                        ProgressView(value: Double(currentCaloriesIntake), total: Double(suggestedCalories)) // 進度條
-                            .accentColor(Color.green)
-                            .scaleEffect(x: 1, y: 8)
-                            .padding([.leading,.top,.bottom])
+                        if(currentCalories > suggestedCalories){
+                            ProgressView(value: Double(currentCalories), total: Double(suggestedCalories)) // 進度條
+                                .accentColor(Color.red)
+                                .scaleEffect(x: 1, y: 8)
+                                .padding([.leading,.top,.bottom])
+                            
+                        }
+                        else{
+                            ProgressView(value: Double(currentCalories), total: Double(suggestedCalories)) // 進度條
+                                .accentColor(Color.green)
+                                .scaleEffect(x: 1, y: 8)
+                                .padding([.leading,.top,.bottom])
+                            
+                        }
                         
                         //新增飲食紀錄Button
                         Button(action: {
@@ -88,6 +91,18 @@ struct MainView: View {
                                 .foregroundColor(.black)
                                 .padding([.trailing,.top,.bottom])
                         }
+                        
+                        //跳轉新增用餐紀錄頁面（AddFoodView）
+                        NavigationLink(isActive: $isNavPush) {
+                            AddFoodView(selectedFood: $selectedFood) // 将selectedFood传递给AddFoodView
+                                .navigationBarBackButtonHidden(true)
+                        } label: {}
+                        
+                        //跳轉詳細用餐紀錄頁面（ShowDetailView）
+                        NavigationLink(isActive: $showDetail) {
+                            ShowDetailView()
+                                .navigationBarBackButtonHidden(true)
+                        } label: {}
                     }
                     
                     //詳細飲食紀錄Button
@@ -108,17 +123,16 @@ struct MainView: View {
                 .onAppear {//進入頁面時首先加載的數據
                     fetchFoodRecords()//讀取飲食紀錄的Database（CoreData）
                     
-                    if let savedBmi = UserDefaults.standard.value(forKey: "bmi") as? Double {
-                        bmi = savedBmi//讀取bmi
+                    if let savedWeight = UserDefaults.standard.value(forKey: "weight") as? Double {
+                        weight = savedWeight
                     }
                     
-                    if let savedSuggestedCalories = UserDefaults.standard.value(forKey: "suggestedCalories") as? Double {
-                        suggestedCalories = savedSuggestedCalories
-                    }//讀取建議大卡攝取量
-                    
+                    if let savedHeight = UserDefaults.standard.value(forKey: "height") as? Double {
+                        height = savedHeight
+                    }
                     currentDate = Date() // 更新當前日期
+                    calculateBMI()
                 }
-                
             }
             .tabItem {
                 Image(systemName: "doc.text.below.ecg")
@@ -202,11 +216,11 @@ struct MainView: View {
             //tab 運動紀錄 start
             NavigationView {
                 VStack(spacing: 20) {
-                    createCardView(title: "步数", value: "\(stepCount)")
-                    createCardView(title: "距离", value: "\(distance)")
-                    createCardView(title: "活动", value: "\(activeEnergyBurned)")
+                    createCardView(title: "步行", value: "\(stepCount)")
+                    createCardView(title: "步行 + 跑步距离", value: "\(distance)")
+                    createCardView(title: "動態能量", value: "\(activeEnergyBurned)")
+                    createCardView(title: "靜態能量", value: "\(basalEnergyBurned)")
                     createCardView(title: "站立时间", value: "\(standHours)")
-                    createCardView(title: "运动时间", value: "\(exerciseHours)")
                     Spacer()
                 }
                 .padding()
@@ -221,8 +235,8 @@ struct MainView: View {
                 getStepCount()
                 getDistance()
                 getActiveEnergyBurned()
+                readBasalEnergyBurned()
                 getStandHours()
-                getExerciseHours()
             }
 
 
@@ -317,6 +331,21 @@ struct MainView: View {
     
     //================================================================================
     //func
+    
+    //BMI計算
+    private func calculateBMI() {
+        
+        let heightInMeter = height / 100
+        bmi = weight / (heightInMeter * heightInMeter)
+        calculateCalories()
+    }
+    
+    private func calculateCalories() {
+        // 根據BMI計算建議攝取熱量（大卡）
+        let caloriesPerBMIUnit = 1250
+        suggestedCalories = Double(bmi * Double(caloriesPerBMIUnit) / 10)
+    }
+    
     private func toggleHeightInput() {
             showHeightInput.toggle()
         }
@@ -336,7 +365,7 @@ struct MainView: View {
         
         do {
             let records = try PersistenceController.shared.container.viewContext.fetch(request)
-            currentCaloriesIntake = records.reduce(0.0) { $0 + $1.calories }
+            currentCalories = records.reduce(0.0) { $0 + $1.calories }
         } catch {
             print("Error fetching food records: \(error)")
         }
@@ -366,8 +395,10 @@ struct MainView: View {
             HKObjectType.quantityType(forIdentifier: .stepCount)!,
             HKObjectType.quantityType(forIdentifier: .distanceWalkingRunning)!,
             HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!,
+            HKObjectType.quantityType(forIdentifier: .basalEnergyBurned)!,
             HKObjectType.quantityType(forIdentifier: .appleStandTime)!,
             HKObjectType.workoutType()
+            
         ]
         
         healthStore.requestAuthorization(toShare: nil, read: typesToRead) { (success, error) in
@@ -450,6 +481,34 @@ struct MainView: View {
         healthStore.execute(query)
     }
     
+    func readBasalEnergyBurned() {
+        // 创建静态能量消耗类型
+        let basalEnergyType = HKQuantityType.quantityType(forIdentifier: .basalEnergyBurned)!
+        
+        // 创建查询谓词，限制为今天
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let tomorrow = calendar.date(byAdding: .day, value: 1, to: today)!
+        let predicate = HKQuery.predicateForSamples(withStart: today, end: tomorrow, options: .strictStartDate)
+        
+        // 创建查询，获取静态能量消耗数据
+        let query = HKStatisticsQuery(quantityType: basalEnergyType, quantitySamplePredicate: predicate, options: .cumulativeSum) { (_, result, error) in
+            if let sumQuantity = result?.sumQuantity() {
+                let energy = sumQuantity.doubleValue(for: HKUnit.kilocalorie())
+                DispatchQueue.main.async {
+                    self.basalEnergyBurned = energy
+                }
+            } else {
+                if let error = error {
+                    print("Failed to fetch active energy burned: \(error.localizedDescription)")
+                }
+            }
+        }
+        
+        // 执行查询
+        healthStore.execute(query)
+    }
+    
     private func getStandHours() {
         let standType = HKQuantityType.quantityType(forIdentifier: .appleStandTime)!
         
@@ -467,25 +526,6 @@ struct MainView: View {
             } else {
                 if let error = error {
                     print("Failed to fetch stand hours: \(error.localizedDescription)")
-                }
-            }
-        }
-        healthStore.execute(query)
-    }
-    
-    private func getExerciseHours() {
-        let workoutType = HKObjectType.workoutType()
-        let predicate = HKQuery.predicateForWorkouts(with: .other)
-        
-        let query = HKSampleQuery(sampleType: workoutType, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { (_, samples, error) in
-            if let workouts = samples as? [HKWorkout] {
-                let exerciseHours = workouts.reduce(0.0) { $0 + $1.duration }
-                DispatchQueue.main.async {
-                    self.exerciseHours = exerciseHours
-                }
-            } else {
-                if let error = error {
-                    print("Failed to fetch exercise hours: \(error.localizedDescription)")
                 }
             }
         }
