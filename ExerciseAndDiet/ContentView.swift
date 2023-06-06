@@ -9,7 +9,6 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
-                
                 //檢測是否有輸入過資料，如果有資料就跳轉MainView頁面
                 if let savedBmi = UserDefaults.standard.value(forKey: "bmi") as? Double{
                     NavigationLink(isActive: $isData) {
