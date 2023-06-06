@@ -13,7 +13,10 @@ struct MainView: View {
     @State private var currentDate = Date()//儲存日期
     @State private var foodListAdded = false // 控制是否接收到通知
     @State private var addFromFoodList = false // 控制是否接收到通知
-    
+    @State private var showWeightInput: Bool = false
+    @State private var weight: Double = UserDefaults.standard.value(forKey: "weight") as! Double
+    @State private var showHeightInput: Bool = false
+    @State private var height: Double = UserDefaults.standard.value(forKey: "height") as! Double
     //以下是用來存取HealthKit的變數
     @State private var stepCount: Double = 0
     @State private var distance: Double = 0
@@ -228,7 +231,55 @@ struct MainView: View {
             //tab 個人資訊 start
             NavigationView {
                 VStack {
-                    
+                    VStack{
+                        HStack {
+                                    if showHeightInput {
+                                        TextField("Height (in cm)", value: $height, formatter: NumberFormatter())
+                                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                                            .padding()
+                                    } else {
+                                        Text("Height: \(String(format: "%.1f", (UserDefaults.standard.value(forKey: "height") as! Double)))cm")
+                                            .font(.headline)
+                                            .padding()
+                                    }
+                                    Spacer()
+                                    Button(action: toggleHeightInput) {
+                                        Text(showHeightInput ? "Save" : "+")
+                                            .font(.headline)
+                                            .foregroundColor(.white)
+                                            .padding()
+                                            .background(Color.blue)
+                                            .cornerRadius(10)
+                                    }
+                                }.padding()
+                                .onChange(of: height) { newValue in
+                                    UserDefaults.standard.set(newValue, forKey: "height")
+                                }
+                        
+                        HStack {
+                                    if showWeightInput {
+                                        TextField("Weight (in kg)", value: $weight, formatter: NumberFormatter())
+                                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                                            .padding()
+                                    } else {
+                                        Text("Weight: \(String(format: "%.1f", (UserDefaults.standard.value(forKey: "weight") as! Double))) kg")
+                                            .font(.headline)
+                                            .padding()
+                                    }
+                                    Spacer()
+                                    Button(action: toggleWeightInput) {
+                                        Text(showWeightInput ? "Save" : "+")
+                                            .font(.headline)
+                                            .foregroundColor(.white)
+                                            .padding()
+                                            .background(Color.blue)
+                                            .cornerRadius(10)
+                                    }
+                        }.padding()
+                         .onChange(of: weight) { newValue in
+                                    UserDefaults.standard.set(newValue, forKey: "weight")
+                                }
+                    }
                     //登出Button
                     Button(action: {
                         resetAppData()
@@ -266,6 +317,12 @@ struct MainView: View {
     
     //================================================================================
     //func
+    private func toggleHeightInput() {
+            showHeightInput.toggle()
+        }
+    private func toggleWeightInput() {
+            showWeightInput.toggle()
+        }
     //讀取飲食紀錄的func （FoodRecord CoreData）
     private func fetchFoodRecords() {
         let request: NSFetchRequest<FoodRecord> = FoodRecord.fetchRequest()
