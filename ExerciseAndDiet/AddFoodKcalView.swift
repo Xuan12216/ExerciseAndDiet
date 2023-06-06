@@ -15,7 +15,7 @@ struct AddFoodKcalView: View {
     private var foodList: FetchedResults<FoodList>
     
     var body: some View {
-        NavigationView{
+        NavigationView {
             VStack{
                 HStack {
                     Text("名稱")
@@ -38,21 +38,21 @@ struct AddFoodKcalView: View {
                 }
                 Spacer()
             }
+            .navigationBarTitle("新建食物")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarItems(
+                leading: Button(action: {
+                    presentationMode.wrappedValue.dismiss()
+                }) {
+                    Text("取消")
+                },
+                trailing: Button(action: {
+                    addFoodKcal()
+                }) {
+                    Text("儲存")
+                }
+            )
         }
-        .navigationBarTitle("新建食物")
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarItems(
-            leading: Button(action: {
-                presentationMode.wrappedValue.dismiss()
-            }) {
-                Text("取消")
-            },
-            trailing: Button(action: {
-                addFoodKcal()
-            }) {
-                Text("儲存")
-            }
-        )
         .alert(isPresented: $showAlert) {
             Alert(
                 title: Text("儲存成功"),

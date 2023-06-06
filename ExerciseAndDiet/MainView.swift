@@ -99,17 +99,13 @@ struct MainView: View {
                                     .padding([.trailing,.top,.bottom])
                             }
                             
-                            //跳轉新增用餐紀錄頁面（AddFoodView）
-                            NavigationLink(isActive: $isNavPush) {
-                                AddFoodView(selectedFood: $selectedFood) // 将selectedFood传递给AddFoodView
-                                    .navigationBarBackButtonHidden(true)
-                            } label: {}
+                            .sheet(isPresented: $isNavPush) {
+                                AddFoodView(selectedFood: $selectedFood)
+                            }
                             
-                            //跳轉詳細用餐紀錄頁面（ShowDetailView）
-                            NavigationLink(isActive: $showDetail) {
+                            .sheet(isPresented: $showDetail) {
                                 ShowDetailView()
-                                    .navigationBarBackButtonHidden(true)
-                            } label: {}
+                            }
                         }
                     } else {
                         Text("正在加載數據...")
@@ -164,20 +160,15 @@ struct MainView: View {
             //tab 添加數據 start
             NavigationView {
                 VStack {
-                    //跳轉頁面，新建食物頁面
-                    NavigationLink(isActive: $addFoodKcal) {
-                        AddFoodKcalView() // 
-                            .navigationBarBackButtonHidden(true)
-                    } label: {}
-                    
-                    //跳轉頁面，新建用餐紀錄頁面
-                    NavigationLink(isActive: $addFromFoodList) {
-                        AddFoodView(selectedFood: $selectedFood) //
-                            .navigationBarBackButtonHidden(true)
-                    } label: {}
                     
                     Spacer()
-                    
+                    .sheet(isPresented: $addFoodKcal){
+                        AddFoodKcalView()
+                    }
+                    //跳轉頁面，新建用餐紀錄頁面
+                    .sheet(isPresented: $addFromFoodList){
+                        AddFoodView(selectedFood: $selectedFood)
+                    }
                     //List 顯示CoreData FoodList的數據
                     List {
                         ForEach(foodList) { food in
